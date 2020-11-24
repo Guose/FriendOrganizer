@@ -12,26 +12,29 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System;
+using FriendOrganizer.UI.Event;
+using System.Data.Entity.Infrastructure;
 
 namespace FriendOrganizer.UI.ViewModel
 {
     public class FriendDetailViewModel : DetailViewModelBase, IFriendDetailViewModel
     {
-        private IFriendRepository _friendRepository;
-        private IMessageDialogService _messageDialogService;
-        private IProgrammingLanguageLookUpDataSerivce _programmingLanguageLookUpDataSerivce;
+
         private FriendWrapper _friend;
         private FriendPhoneNumberWrapper _selectedPhoneNumber;
+        private IFriendRepository _friendRepository;
+        private IProgrammingLanguageLookUpDataSerivce _programmingLanguageLookUpDataSerivce;
 
         public FriendDetailViewModel(IFriendRepository friendRepository, 
             IEventAggregator eventAggregator,
             IMessageDialogService messageDialogService,
-            IProgrammingLanguageLookUpDataSerivce programmingLanguageLookUpDataSerivce):base(eventAggregator)
+            IProgrammingLanguageLookUpDataSerivce programmingLanguageLookUpDataSerivce):base(eventAggregator, messageDialogService)
         {
             _friendRepository = friendRepository;
-            _messageDialogService = messageDialogService;
             _programmingLanguageLookUpDataSerivce = programmingLanguageLookUpDataSerivce;
 
+            eventAggregator.GetEvent<AfterCollectionSavedEvent>()
+                .Subscribe(AfterCollectionSaved);
             
             AddPhoneNumberCommand = new DelegateCommand(OnAddPhoneNumberExecute);
             RemovePhoneNumberCommand = new DelegateCommand(OnRemovePhoneNumberExecute, OnRemovePhoneNumberCanExecute);
@@ -40,13 +43,13 @@ namespace FriendOrganizer.UI.ViewModel
             PhoneNumbers = new ObservableCollection<FriendPhoneNumberWrapper>();
         }
 
-        public override async Task LoadAsync(int? friendId)
+        public override async Task LoadAsync(int friendId)
         {
-            var friend = friendId.HasValue ?
-                await _friendRepository.GetByIdAsync(friendId.Value)
+            var friend = friendId > 0 ?
+                await _friendRepository.GetByIdAsync(friendId)
                 : CreateNewFriend();
 
-            Id = friend.Id;
+            Id = friendId;
 
             InitializeFriend(friend);
 
@@ -154,10 +157,13 @@ namespace FriendOrganizer.UI.ViewModel
 
         protected override async void OnSaveExecute()
         {
-            await _friendRepository.SaveAsync();
-            HasChanges = _friendRepository.HasChanges();
-            Id = Friend.Id;
-            RaiseDetailSavedEvent(Friend.Id, $"{Friend.FirstName} {Friend.LastName}");
+            await SaveWithOptimisticConcurrencyAsync(_friendRepository.SaveAsync,
+                () =>
+                {
+                    HasChanges = _friendRepository.HasChanges();
+                    Id = Friend.Id;
+                    RaiseDetailSavedEvent(Friend.Id, $"{Friend.FirstName} {Friend.LastName}");
+                });
         }
 
         //send true if isFriend and if the friend doesn't have errors
@@ -173,12 +179,12 @@ namespace FriendOrganizer.UI.ViewModel
         {
             if (await _friendRepository.HasMeetingsAsync(Friend.Id))
             {
-                _messageDialogService.ShowInfoDialog($"{Friend.FirstName} {Friend.LastName} " +
+                MessageDialogService.ShowInfoDialog($"{Friend.FirstName} {Friend.LastName} " +
                     $"can't be deleted, as this friend is part of at least one meeting");
                 return;
             }
 
-            var result = _messageDialogService.ShowOkCancelDialog(
+            var result = MessageDialogService.ShowOkCancelDialog(
                 $"Do you really want to delete the friend {Friend.FirstName} {Friend.LastName}?","Question");
 
             if (result == MessageDialogResult.OK)
@@ -219,6 +225,14 @@ namespace FriendOrganizer.UI.ViewModel
             var friend = new Friend();
             _friendRepository.Add(friend);
             return friend;
+        }
+
+        private async void AfterCollectionSaved(AfterCollectionSavedEventArgs args)
+        {
+            if (args.ViewModelName == nameof(ProgrammingLanguageDetailViewModel))
+            {
+                await LoadingProgrammingLanguagesLookupAsync();
+            }
         }
     }
 }
