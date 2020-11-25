@@ -1,17 +1,23 @@
-﻿using System.Windows;
+﻿using MahApps.Metro.Controls;
+using MahApps.Metro.Controls.Dialogs;
+using System.Threading.Tasks;
+using System.Windows;
 
 namespace FriendOrganizer.UI.View.Services
 {
     public class MessageDialogService : IMessageDialogService
     {
-        public MessageDialogResult ShowOkCancelDialog(string message, string title)
+        private MetroWindow MetroWindow => (MetroWindow)App.Current.MainWindow;
+
+        public async Task<MessageDialogResult> ShowOkCancelDialogAsync(string message, string title)
         {
-            var result = MessageBox.Show(message, title, MessageBoxButton.OKCancel);
-            return result == MessageBoxResult.OK ? MessageDialogResult.OK : MessageDialogResult.Cancel;
+            var result = await MetroWindow.ShowMessageAsync(title, message, MessageDialogStyle.AffirmativeAndNegative);
+            return result == MahApps.Metro.Controls.Dialogs.MessageDialogResult.Affirmative
+                ? MessageDialogResult.OK : MessageDialogResult.Cancel;
         }
-        public void ShowInfoDialog(string text)
+        public async Task ShowInfoDialogAsync(string text)
         {
-            MessageBox.Show(text, "Info");
+            await MetroWindow.ShowMessageAsync("Info", text);
         }
     }
     public enum MessageDialogResult
