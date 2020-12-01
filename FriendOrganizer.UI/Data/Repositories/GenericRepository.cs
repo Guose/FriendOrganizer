@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 namespace FriendOrganizer.UI.Data.Repositories
 {
     public class GenericRepository<TEntity, TContext> : IGenericRepository<TEntity>
-        where TEntity:class
+        where TEntity : class
         where TContext : DbContext
     {
         protected readonly TContext Context;
