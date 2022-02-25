@@ -77,8 +77,7 @@
                     </Style>
                 </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-        
+        </ResourceDictionary>        
         
     </Application.Resources>
 </Application>

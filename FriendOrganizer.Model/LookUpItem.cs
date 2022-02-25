@@ -1,6 +1,6 @@
 ﻿namespace FriendOrganizer.Model
 {
-    //Class is part of the model for future use in the Database
+    //Class is part of the model for display purposes only to the view
     public class LookUpItem
     {
         public int Id { get; set; }
