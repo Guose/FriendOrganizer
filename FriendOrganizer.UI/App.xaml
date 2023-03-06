@@ -41,8 +41,10 @@
                                 <ControlTemplate>
                                     <StackPanel>
                                         <AdornedElementPlaceholder x:Name="placeholder"/>
-                                        <TextBlock FontSize="12" Foreground="White" Text="{Binding ElementName=placeholder, 
-                                Path=AdornedElement.(Validation.Errors)[0].ErrorContent}" />
+                                        <TextBlock 
+                                            FontSize="12" 
+                                            Foreground="White" 
+                                            Text="{Binding ElementName=placeholder, Path=AdornedElement.(Validation.Errors)[0].ErrorContent}" />
                                     </StackPanel>
                                 </ControlTemplate>
                             </Setter.Value>
@@ -50,8 +52,9 @@
                         <Style.Triggers>
                             <Trigger Property="Validation.HasError" Value="True">
                                 <Setter Property="Background" Value="DarkRed"/>
-                                <Setter Property="ToolTip" Value="{Binding RelativeSource={RelativeSource Self},
-                        Path=(Validation.Errors)[0].ErrorContent}"/>
+                                <Setter 
+                                    Property="ToolTip"
+                                    Value="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors)[0].ErrorContent}"/>
                             </Trigger>
                         </Style.Triggers>
                     </Style>
@@ -60,8 +63,9 @@
                         <Style.Triggers>
                             <Trigger Property="Validation.HasError" Value="True">
                                 <Setter Property="Background" Value="DarkRed"/>
-                                <Setter Property="ToolTip" Value="{Binding RelativeSource={RelativeSource Self},
-                        Path=(Validation.Errors)[0].ErrorContent}"/>
+                                <Setter 
+                                    Property="ToolTip" 
+                                    Value="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors)[0].ErrorContent}"/>
                             </Trigger>
                         </Style.Triggers>
                     </Style>
@@ -70,8 +74,9 @@
                         <Style.Triggers>
                             <Trigger Property="Validation.HasError" Value="True">
                                 <Setter Property="Background" Value="DarkRed"/>
-                                <Setter Property="ToolTip" Value="{Binding RelativeSource={RelativeSource Self},
-                        Path=(Validation.Errors)[0].ErrorContent}"/>
+                                <Setter 
+                                    Property="ToolTip" 
+                                    Value="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors)[0].ErrorContent}"/>
                             </Trigger>
                         </Style.Triggers>
                     </Style>
