@@ -18,7 +18,8 @@ namespace FriendOrganizer.UI.ViewModel
         private IIndex<string, IDetailViewModel> _detailViewModelCreator;
         private IDetailViewModel _selectedDetailViewModel;
 
-        public MainViewModel(INavigationViewModel navigationViewModel,
+        public MainViewModel(
+            INavigationViewModel navigationViewModel,
             IIndex<string, IDetailViewModel> detailViewModelCreator,
             IEventAggregator eventAggregator,
             IMessageDialogService messageDialogService)

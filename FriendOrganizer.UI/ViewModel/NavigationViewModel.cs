@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Prism.Events;
 using FriendOrganizer.UI.Event;
 using System.Linq;
-using System;
 
 namespace FriendOrganizer.UI.ViewModel
 {

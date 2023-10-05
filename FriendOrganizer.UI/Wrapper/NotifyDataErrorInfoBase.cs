@@ -14,7 +14,7 @@ namespace FriendOrganizer.UI.Wrapper
         //**********************************************************************************************************
 
         //store errors to Dictionary for properties
-        private Dictionary<string, List<string>> _errorsByPropertyName = new Dictionary<string, List<string>>();
+        private readonly Dictionary<string, List<string>> _errorsByPropertyName = new Dictionary<string, List<string>>();
 
         //Check to see if any errors
         public bool HasErrors => _errorsByPropertyName.Any();
